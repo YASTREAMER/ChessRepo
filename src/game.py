@@ -49,10 +49,16 @@ class Game:
                     #Loading the Texture of the piece 
                     img = pygame.image.load(piece.texture)
 
-                    #Center the piece on the board based on the row and column
-                    img_center = col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
-                    piece.texture_rect = img.get_rect(center = img_center)
+                    #Showing all the piece except the one being dragger
+                    if piece is not self.dragger.piece:
 
-                    surface.blit(img, piece.texture_rect)
+                        #Setting the texture back to the original texture
+                        piece.set_texture(size=80)
+
+                        #Center the piece on the board based on the row and column
+                        img_center = col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
+                        piece.texture_rect = img.get_rect(center = img_center)
+
+                        surface.blit(img, piece.texture_rect)
 
 
