@@ -29,12 +29,17 @@ class Piece :
             f'assets/images/imgs-{size}px/{self.colour}_{self.name}.png'
         )
 
-    def add_moves(self, move) -> None:
+    def add_move(self, move) -> None:
 
         #Appending the moves that can be played
         self.moves.append(move)
 
+    def clear_moves(self):
+        
+        #Setting the moves to be empyt
+        self.moves=[]
 
+#/home/yash/Documents/ChessRepo/assets/images/imgs-128px/black_rook.png
 #Below are the class for every piece in the game
 
 class Pawn(Piece) :

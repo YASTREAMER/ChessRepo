@@ -5,6 +5,8 @@ import sys
 
 from const import *
 from game import Game
+from square import Square
+from move import Move
 
 
 class Main:
@@ -35,10 +37,13 @@ class Main:
         while True:
 
             #Code for displaying the board 
-            self.game.show_bg(screen)
+            game.show_bg(screen)
+
+            #Code for showing the moves on the screem
+            game.show_moves(screen)
 
             #Code for showing the pieces on the board
-            self.game.show_piece(screen)
+            game.show_piece(screen)
 
             #Code for updating the piece when its being dragged
             if dragger.dragging:
@@ -59,8 +64,18 @@ class Main:
 
                         #Save the information of the piece ie the type of piece and its position 
                         piece = board.squares[clicked_row][clicked_col].piece
+
+                        #Calculate the possible moves
+                        board.calc_moves(piece,clicked_row,clicked_col)
+                        
+                        #Save the initial position of the piece
                         dragger.save_initial(event.pos)
                         dragger.drag_piece(piece)
+
+                        #show method
+                        game.show_bg(screen)
+                        game.show_moves(screen)
+                        game.show_piece(screen)
 
                 #Mouse Motion 
                 elif event.type == pygame.MOUSEMOTION:
@@ -68,13 +83,42 @@ class Main:
                     if dragger.dragging:
 
                         dragger.update_mouse(event.pos)
+
                         game.show_bg(screen)
+                        game.show_moves(screen)
                         game.show_piece(screen)
+
                         dragger.update_blit(screen)
 
                 #On Mouse Release
                 elif event.type == pygame.MOUSEBUTTONUP:
                     
+                    #Check is if the piece is being dragged
+                    if dragger.dragging:
+
+                        dragger.update_mouse(event.pos)
+
+                        #Setting the released row and released column
+                        released_row = dragger.MouseY // SQSIZE
+                        released_col = dragger.MouseX // SQSIZE
+
+                        #Check if the move is valid or not 
+                        initial = Square(dragger.initial_row, dragger.initial_col)
+                        final = Square(released_row, released_col)
+
+                        move = Move(initial, final)
+
+                        #Checking if it is a valid move
+                        if board.valid_move(dragger.piece, move):
+
+                            #Updating the board
+                            board.move(dragger.piece, move)
+
+                            #Upadte the graphics/show methods
+                            game.show_bg(screen)
+                            game.show_piece(screen)
+
+                    #We want this to be the last line for this elif sentence
                     dragger.undrag_piece(piece)
                 
                 #Code to exit the game

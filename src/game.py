@@ -62,3 +62,23 @@ class Game:
                         surface.blit(img, piece.texture_rect)
 
 
+    def show_moves(self, surface) -> None:
+        
+        #Check for the piece we are dragging
+        if self.dragger.dragging:
+
+            #store the piece in the piece 
+            piece = self.dragger.piece
+
+            #Looping for the valid moves
+            for move in piece.moves:
+
+                #colour
+                colour= '#C86464' if (move.final.row + move.final.col) % 2 == 0 else '#C84646'
+
+                #rect
+                rect = (move.final.col * SQSIZE, move.final.row * SQSIZE, SQSIZE, SQSIZE )
+                 
+                #blit
+                pygame.draw.rect(surface, colour, rect)
+
