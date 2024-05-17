@@ -28,7 +28,7 @@ class Config:
             os.path.join('assets/sounds/move.wav'))
 
         #The sound to be played when a piece is captured
-        self.move_sound = Sound(
+        self.capture_sound = Sound(
             os.path.join('assets/sounds/capture.wav'))       
 
     def change_theme(self) -> None:

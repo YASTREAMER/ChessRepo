@@ -130,8 +130,14 @@ class Main:
                         #Checking if it is a valid move
                         if board.valid_move(dragger.piece, move):
 
+                            #Check if the piece was captured or not 
+                            captured = board.squares[released_row][released_col].has_piece()
+
                             #Updating the board
                             board.move(dragger.piece, move)
+
+                            #Play the sound
+                            game.play_sound(captured)
 
                             #Upadte the graphics/show methods
                             game.show_bg(screen)
