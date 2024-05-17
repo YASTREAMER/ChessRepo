@@ -251,7 +251,7 @@ class Board():
 
             king_move()
 
-    def move(self, piece, move):
+    def move(self, piece, move) -> None:
         
         initial = move.initial
         final = move.final
@@ -273,7 +273,7 @@ class Board():
         #Setting the last move to the last move played
         self.last_move = move
 
-    def valid_move(self, piece, move):
+    def valid_move(self, piece, move) -> move:
         
         return move in piece.moves
 
