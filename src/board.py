@@ -4,6 +4,8 @@ from square import Square
 from piece import *
 from move import *
 
+import pygame
+
 class Board():
 
     def __init__(self) -> None:
@@ -13,6 +15,9 @@ class Board():
 
         #Initializing the last move 
         self.last_move =  None
+
+        #Checking promotiion
+        self.prom:bool = True
 
         #Initializing the create method
         self._create()
@@ -264,6 +269,13 @@ class Board():
         #Setting the final squrae to contain the piece
         self.squares[final.row][final.col].piece = piece
 
+        #Checking if the moved piece is a pawn or not
+        if isinstance(piece, Pawn):
+
+            #If true we are gonna check for promotion 
+            self.check_promotion(piece, final)
+
+
         #Move
         piece.moved = True
 
@@ -276,6 +288,46 @@ class Board():
     def valid_move(self, piece, move) -> move:
         
         return move in piece.moves
+    
+    def check_promotion(self, piece , final) -> None:
+
+        #Checking if the row is the last row or not
+        if final.row == 0 or final.row == 7:
+
+            prom = True
+            
+            while prom:
+
+                for event in pygame.event.get():
+
+
+                    if event.type == pygame.KEYDOWN:
+
+                        if event.key == pygame.K_1:
+
+                            #Promootion
+                            self.squares[final.row][final.col].piece = Queen(piece.colour)
+                            prom = False
+                            break
+
+                        if event.key == pygame.K_2:
+                            
+                            self.squares[final.row][final.col].piece = Rook(piece.colour)
+                            self.prom = False
+                            break
+
+                        if event.key == pygame.K_3:
+
+                            self.squares[final.row][final.col].piece = Knight(piece.colour)
+                            prom = False
+                            break
+
+                        if event.key == pygame.K_4:
+
+                            self.squares[final.row][final.col].piece = Bishop(piece.colour)
+                            prom = False
+                            break
+
 
     #These methods are private methods and are not to be called outside this class
     def _create(self) -> None:

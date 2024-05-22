@@ -163,7 +163,7 @@ class Main:
                         #Change the theme 
                         game.change_theme()
 
-                    if event,key == pygame.K_r:
+                    if event.key == pygame.K_r:
                 
                         #Reset the games
                         game.reset()
