@@ -163,6 +163,16 @@ class Main:
                         #Change the theme 
                         game.change_theme()
 
+                    if event,key == pygame.K_r:
+                
+                        #Reset the games
+                        game.reset()
+
+                        #We wanna reset the values 
+                        game = self.game
+                        board = self.game.board
+                        dragger = self.game.dragger
+
 
                 #Code to exit the game
                 elif event.type == pygame.QUIT:

@@ -151,3 +151,8 @@ class Game:
         else :
 
             self.config.move_sound.play()
+
+    def reset(self) -> None:
+
+        #Reset the game
+        self.__init__()
