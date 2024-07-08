@@ -5,6 +5,7 @@ from piece import *
 from move import *
 
 import pygame
+import copy
 
 class Board():
 
@@ -26,7 +27,7 @@ class Board():
         self._add_piece('white')
         self._add_piece('black')
 
-    def calc_moves(self, piece, row, col) -> None:
+    def calc_moves(self, piece, row, col, bool = True) -> None:
 
         #Calculate the valid moves for a knight
         def knight_moves() -> None:
@@ -55,13 +56,22 @@ class Board():
 
                         #Create square of the move
                         initial = Square(row, col)
-                        final = Square(possible_move_row, possible_move_col)
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+                        final = Square(possible_move_row, possible_move_col,final_piece)
 
                         #Create the move 
                         move = Move(initial, final)
 
-                        #append a valid move
-                        piece.add_move(move)
+                        if bool:
+                            #Checking if the moves cause our king to be in check
+                            if not self.in_check(piece, move):
+                                #Adding move
+                                piece.add_move(move)
+                            
+                            else:break 
+
+                        else:
+                            piece.add_move(move)
         
         #Calcautle the valid moves for a pawn
         def pawn_moves() -> None:
@@ -69,6 +79,7 @@ class Board():
             #checking if the pawn has already moved or not 
             steps = 1 if piece.moved else 2
 
+            #Vertical Movement
             #Movement of pawn in vertical direction
             start = row + piece.dir
             end = row + (piece.dir * (1 + steps))
@@ -89,10 +100,15 @@ class Board():
                         #Creating a move 
                         move = Move(initial, final)
 
-                        #Adding move
-                        piece.add_move(move)
+                        if bool:
+                            #Checking if the moves cause our king to be in check
+                            if not self.in_check(piece, move):
+                                #Adding move
+                                piece.add_move(move)
 
-                    #The piece movement is blocked 
+                        else:
+                            piece.add_move(move)
+
                     else: break
 
                 #Piece not is range
@@ -113,13 +129,22 @@ class Board():
                         #Create the intital and final move square 
                         initial = Square(row, col)
 
-                        final = Square(possible_move_row,possible_move_col)
+                        #Storing the piece on the final move
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+
+                        final = Square(possible_move_row,possible_move_col,final_piece)
 
                         #Create a new move
                         move = Move(initial, final)
 
-                        #Adding new move 
-                        piece.add_move(move)
+                        if bool:
+                            #Checking if the moves cause our king to be in check
+                            if not self.in_check(piece, move):
+                                #Adding move
+                                piece.add_move(move)
+
+                        else:
+                            piece.add_move(move)
                     
         def straightline_moves(incrs) -> None:
 
@@ -138,8 +163,8 @@ class Board():
                         #Creating a new possible move 
 
                         initial = Square(row, col)
-
-                        final = Square(possible_move_row,possible_move_col)
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+                        final = Square(possible_move_row,possible_move_col,final_piece)
 
                         #Creating a move 
                         move = Move(initial, final)
@@ -148,17 +173,30 @@ class Board():
                         #Checking if the possible squares are empty
                         if self.squares[possible_move_row][possible_move_col].isempty():
                             
-                            #Append the new move
-                            piece.add_move(move)    
+                            if bool:
+                                #Checking if the moves cause our king to be in check
+                                if not self.in_check(piece, move):
+                                    #Adding move
+                                    piece.add_move(move)
+
+                            else:
+                                piece.add_move(move)   
                         
                         #Checking if the possible square has a rival piece
-                        if self.squares[possible_move_row][possible_move_col].has_enemy_piece(piece.colour):
+                        elif self.squares[possible_move_row][possible_move_col].has_enemy_piece(piece.colour):
                             
                             #Append the new move
-                            piece.add_move(move)
+                            if bool:
+                            #Checking if the moves cause our king to be in check
+                                if not self.in_check(piece, move):
+                                    #Adding move
+                                    piece.add_move(move)
+
+                            else:
+                                piece.add_move(move)
                             break
 
-                        if self.squares[possible_move_row][possible_move_col].has_team_piece(piece.colour):
+                        elif self.squares[possible_move_row][possible_move_col].has_team_piece(piece.colour):
                             
                             #Break if the possible square has a team piece
                             break
@@ -206,10 +244,88 @@ class Board():
                             #Create the move 
                             move = Move(initial, final)
 
-                            #append a valid move
-                            piece.add_move(move)
+                            if bool:
+                                #Checking if the moves cause our king to be in check
+                                if not self.in_check(piece, move):
+                                    #Adding move
+                                    piece.add_move(move)
+                                else:
+                                    break
 
+                            else:
+                                piece.add_move(move)
 
+            #Castling moves
+            if not piece.moved:
+
+                #Queen side castling 
+                left_rook = self.squares[row][0].piece
+
+                #Checking if the left row has moved or not 
+                if isinstance(left_rook, Rook):
+                    if not left_rook.moved:
+
+                        #Checking the board has piece in between the rook and the king
+                        for c in range(1,4):
+
+                            if self.squares[row][c].has_piece():
+                                #Castling is not possible
+                                break
+
+                            if c == 3:
+                                
+                                #Adding the left rook move to the king move
+                                piece.left_rook = left_rook
+
+                                #Rook move
+                                initial = Square(row,0 )
+                                final = Square(row, 3 )
+                                move = Move(initial, final)
+
+                                #Adding the move 
+                                left_rook.add_move(move)
+
+                                #King move
+                                initial = Square(row,col)
+                                final = Square(row, 2)
+                                move = Move(initial, final)
+
+                                #Adding the move 
+                                piece.add_move(move)
+
+                right_rook = self.squares[row][7].piece
+
+                #Checking if the left row has moved or not 
+                if isinstance(right_rook , Rook):
+                    if not right_rook.moved:
+
+                        #Checking the board has piece in between the rook and the king
+                        for c in range(5,7):
+
+                            if self.squares[row][c].has_piece():
+                                #Castling is not possible
+                                break
+
+                            if c == 6:
+                                
+                                #Adding the left rook move to the king move
+                                piece.right_rook = right_rook
+
+                                #Rook move
+                                initial = Square(row,7)
+                                final = Square(row, 5)
+                                move = Move(initial, final)
+
+                                #Adding the move 
+                                right_rook.add_move(move)
+
+                                #King move
+                                initial = Square(row,col)
+                                final = Square(row, 6)
+                                move = Move(initial, final)
+
+                                #Adding the move 
+                                piece.add_move(move)
 
         #Calculates the valid moves for a piece
         if isinstance(piece, Pawn):
@@ -275,6 +391,17 @@ class Board():
             #If true we are gonna check for promotion 
             self.check_promotion(piece, final)
 
+        #King castling
+        if isinstance(piece,King):
+
+            #Seeing if the condition for the castling are valid 
+            if self.castling(initial, final):
+                
+                #Checking if the difference if less than 0 or more than zero
+                diff = final.col - initial.col
+                rook = piece.left_rook if (diff <0) else piece.right_rook 
+
+                self.move(rook, rook.moves[-1])
 
         #Move
         piece.moved = True
@@ -328,6 +455,37 @@ class Board():
                             prom = False
                             break
 
+    def castling(self, initial , final) -> bool:
+        
+        #Checking if the king has moved by 2 squares
+        return abs(initial.col - final.col) == 2
+    
+    def in_check(self, piece, move) -> bool:
+
+        #Creating a tempory board ie a deep copy of the board
+        temp_board = copy.deepcopy(self)
+
+        #Creating a temporay copy of the piece ie deep copy
+        temp_piece = copy.deepcopy(piece)
+
+        #Moving the piece on the board
+        temp_board.move(temp_piece, move)
+
+        for row in range(ROWS):
+            for col in range(COLS):
+
+                 if temp_board.squares[row][col].has_enemy_piece(piece.colour):
+                     
+                     p = temp_board.squares[row][col].piece 
+                     temp_board.calc_moves(p, row,col,False)
+
+                     #Checking if the temporay move cause a king to be underattach
+                     for m in p.moves:
+                         
+                         if isinstance(m.final.piece, King):
+                             return True
+                         
+        return False
 
     #These methods are private methods and are not to be called outside this class
     def _create(self) -> None:
@@ -337,8 +495,6 @@ class Board():
 
                 self.squares[row][col] = Square(row,col)
     
-
-
     def _add_piece(self, colour) -> None:
         
         #Adding the pieces on the board

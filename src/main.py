@@ -75,7 +75,7 @@ class Main:
                         if piece.colour == game.next_player:
 
                             #Calculate the possible moves
-                            board.calc_moves(piece,clicked_row,clicked_col)
+                            board.calc_moves(piece,clicked_row,clicked_col,bool=True)
                             
                             #Save the initial position of the piece
                             dragger.save_initial(event.pos)
