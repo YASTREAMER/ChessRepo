@@ -1,5 +1,3 @@
-
-import pygame
 import os
 
 from sound import Sound
