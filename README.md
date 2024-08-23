@@ -23,13 +23,9 @@ The ChessEngine currently has 4 themes but you can add more in the ```src/config
 Here are some screenshots.
 
 <img src="Screenshot/Green2.png" title="Logo title" title="Green"  width="200" height="200">
-<figcaption>Green Theme</figcaption>
 
 <img src="Screenshot/Blue1.png"  alt="Blue" width="200" height="200">
-<figcaption>Blue Theme</figcaption>
 <img src="Screenshot/Brown1.png" alt="Brown"  width="200" height="200">
-<figcaption>Brown Theme</figcaption>
 <img src="Screenshot/Grey1.png"  alt="Grey" width="200" height="200">
-<figcaption>Grey Theme</figcaption>
 </details>
 
