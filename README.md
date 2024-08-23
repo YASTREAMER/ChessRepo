@@ -20,7 +20,6 @@ The ChessEngine currently has 4 themes but you can add more in the ```src/config
 
 <details>
   <summary>Screenshots</summary>
-Here are some screenshots.
 
 <img src="Screenshot/Green2.png" title="Logo title" title="Green"  width="200" height="200">
 
