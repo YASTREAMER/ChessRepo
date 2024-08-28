@@ -28,10 +28,6 @@ The ChessEngine currently has 4 themes but you can add more in the ```src/config
 <img src="Screenshot/Grey1.png"  alt="Grey" width="300" height="300">
 </details>
 
-# Refactor
-
-The video which I used as a guide wasnt finished but on futher research I found another Youtuber who did so I would be using his code a guide an implementing things.
-
 # Future Plans
 Future plans for this repe includes   
 - Creating a script for a Chess Bot. 
